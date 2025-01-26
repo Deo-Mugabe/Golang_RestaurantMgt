@@ -1,8 +1,7 @@
 package routes
 
 import (
-	"golang-restaurant-mgt/Golang_RestaurantMgt/handlers"
-
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/Golang_RestaurantMgt/handlers"
 	"github.com/gorilla/mux"
 )
 
