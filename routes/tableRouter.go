@@ -6,9 +6,9 @@ import (
 )
 
 func TableRouter(r *mux.Router) {
-	r.HandleFunc("/tables", handlers.GetBooksHandler).Methods("GET")
-	r.HandleFunc("/tables/{id:[0-9]+}", handlers.GetBookHandler).Methods("GET")
-	r.HandleFunc("/tables", handlers.CreateBookHandler).Methods("POST")
-	r.HandleFunc("/tables/{id:[0-9]+}", handlers.UpdateBookHandler).Methods("PUT")
-	r.HandleFunc("/tables/{id:[0-9]+}", handlers.DeleteBookHandler).Methods("DELETE")
+	r.HandleFunc("/tables", handlers.GetTablesHandler).Methods("GET")
+	r.HandleFunc("/tables/{id:[0-9]+}", handlers.GetTableHandler).Methods("GET")
+	r.HandleFunc("/tables", handlers.CreateTableHandler).Methods("POST")
+	r.HandleFunc("/tables/{id:[0-9]+}", handlers.UpdateTableHandler).Methods("PUT")
+	r.HandleFunc("/tables/{id:[0-9]+}", handlers.DeleteTableHandler).Methods("DELETE")
 }
