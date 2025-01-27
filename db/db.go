@@ -3,6 +3,7 @@ package db
 import (
 	"log"
 
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/Golang_RestaurantMgt/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -20,8 +21,18 @@ func InitDB() {
 	log.Println("Database connection established.")
 
 	// Auto-migrate the models
-	// err = DB.AutoMigrate(&models.Book{})
-	// if err != nil {
-	// 	log.Fatalf("Failed to migrate database: %v", err)
-	// }
+	err = DB.AutoMigrate(
+		&models.Food{},
+		&models.Invoice{},
+		&models.Menu{},
+		&models.Note{},
+		&models.Order{},
+		&models.OrderItem{},
+		&models.Table{},
+		&models.User{},
+	)
+	if err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
+	}
+	log.Println("Database migration completed.")
 }

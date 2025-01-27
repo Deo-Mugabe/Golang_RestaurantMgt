@@ -21,3 +21,19 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 }
+
+func SignUp(w *http.ResponseWriter, r *http.Request) {
+
+}
+
+func Login(w *http.ResponseWriter, r *http.Request) {
+
+}
+
+func HashPassword(password string) string {
+	return ""
+}
+
+func VerifyPassword(userPassword string, providePassword string) (bool, string) {
+	return true, ""
+}
