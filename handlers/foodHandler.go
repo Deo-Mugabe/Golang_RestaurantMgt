@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+
 	"strconv"
 
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/Golang_RestaurantMgt/models"
@@ -10,76 +11,96 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Utility to parse ID from URL
+func parseID(r *http.Request) (uint, error) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return 0, err
+	}
+	return uint(id), nil
+}
+
+// Utility for JSON response
+func jsonResponse(w http.ResponseWriter, status int, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(data)
+}
+
+// Get all foods
 func GetFoodsHandler(w http.ResponseWriter, r *http.Request) {
 	foods, err := services.GetFoods()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(foods)
+	jsonResponse(w, http.StatusOK, foods)
 }
 
+// Get single food
 func GetFoodHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+	id, err := parseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return
 	}
-	food, err := services.GetFood(uint(id))
+
+	food, err := services.GetFood(id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(food)
+	jsonResponse(w, http.StatusOK, food)
 }
 
+// Create a food
 func CreateFoodHandler(w http.ResponseWriter, r *http.Request) {
 	var food models.Food
-	if err := json.NewDecoder(r.Body).Decode(food); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&food); err != nil {
 		http.Error(w, "Invalid Inputs", http.StatusBadRequest)
 		return
 	}
+
 	err := services.CreateFood(&food)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(food)
+	jsonResponse(w, http.StatusCreated, food)
 }
 
+// Update a food
 func UpdateFoodHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+	id, err := parseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return
 	}
+
 	var updatedFood models.Food
-	if err := json.NewDecoder(r.Body).Decode(updatedFood); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&updatedFood); err != nil {
 		http.Error(w, "Invalid Inputs", http.StatusBadRequest)
 		return
 	}
-	err = services.UpdateFood(uint(id), &updatedFood)
+
+	err = services.UpdateFood(id, &updatedFood)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusAccepted)
-	json.NewEncoder(w).Encode(updatedFood)
+	jsonResponse(w, http.StatusAccepted, updatedFood)
 }
 
+// Delete a food
 func DeleteFoodHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+	id, err := parseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return
 	}
-	err = services.DeleteFood(uint(id))
+
+	err = services.DeleteFood(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
