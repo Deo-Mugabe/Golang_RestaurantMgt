@@ -3,11 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/models"
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/services"
-	"github.com/gorilla/mux"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/utility"
 )
 
 func GetOrdersHandler(w http.ResponseWriter, r *http.Request) {
@@ -16,13 +15,12 @@ func GetOrdersHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(orders)
+	utility.JsonResponse(w, http.StatusOK, orders)
 }
 
 func GetOrderHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return
@@ -32,13 +30,12 @@ func GetOrderHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(order)
+	utility.JsonResponse(w, http.StatusOK, order)
 }
 
 func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 	var order models.Order
-	if err := json.NewDecoder(r.Body).Decode(order); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
 		http.Error(w, "Invalid Inputs", http.StatusBadRequest)
 		return
 	}
@@ -47,19 +44,18 @@ func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(order)
+	utility.JsonResponse(w, http.StatusCreated, order)
 }
 
 func UpdateOrderHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return
 	}
 	var updatedOrder models.Order
-	if err := json.NewDecoder(r.Body).Decode(updatedOrder); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&updatedOrder); err != nil {
 		http.Error(w, "Invalid Inputs", http.StatusBadRequest)
 		return
 	}
@@ -68,13 +64,12 @@ func UpdateOrderHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusAccepted)
-	json.NewEncoder(w).Encode(updatedOrder)
+	utility.JsonResponse(w, http.StatusAccepted, updatedOrder)
 }
 
 func DeleteOrderHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return

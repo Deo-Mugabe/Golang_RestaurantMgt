@@ -3,11 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/models"
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/services"
-	"github.com/gorilla/mux"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/utility"
 )
 
 func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
@@ -16,13 +15,12 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
+	utility.JsonResponse(w, http.StatusOK, users)
 }
 
 func GetUserHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return
@@ -32,13 +30,12 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	utility.JsonResponse(w, http.StatusOK, user)
 }
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	var user models.User
-	if err := json.NewDecoder(r.Body).Decode(user); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, "Invalid Inputs", http.StatusBadRequest)
 		return
 	}
@@ -47,19 +44,18 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+	utility.JsonResponse(w, http.StatusCreated, user)
 }
 
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return
 	}
 	var updatedUser models.User
-	if err := json.NewDecoder(r.Body).Decode(updatedUser); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&updatedUser); err != nil {
 		http.Error(w, "Invalid Inputs", http.StatusBadRequest)
 		return
 	}
@@ -68,13 +64,12 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusAccepted)
-	json.NewEncoder(w).Encode(updatedUser)
+	utility.JsonResponse(w, http.StatusAccepted, updatedUser)
 }
 
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return

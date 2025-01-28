@@ -6,25 +6,8 @@ import (
 
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/models"
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/services"
-	"github.com/Deo-Mugabe/Golang_RestaurantMgt/utilities"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/utility"
 )
-
-// Utility to parse ID from URL
-// func parseID(r *http.Request) (uint, error) {
-// 	vars := mux.Vars(r)
-// 	id, err := strconv.Atoi(vars["id"])
-// 	if err != nil {
-// 		return 0, err
-// 	}
-// 	return uint(id), nil
-// }
-
-// // Utility for JSON response
-// func jsonResponse(w http.ResponseWriter, status int, data interface{}) {
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(status)
-// 	json.NewEncoder(w).Encode(data)
-// }
 
 // Get all foods
 func GetFoodsHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,12 +16,12 @@ func GetFoodsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	utilities.JsonResponse(w, http.StatusOK, foods)
+	utility.JsonResponse(w, http.StatusOK, foods)
 }
 
 // Get single food
 func GetFoodHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := utilities.ParseID(r)
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return
@@ -49,7 +32,7 @@ func GetFoodHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	utilities.JsonResponse(w, http.StatusOK, food)
+	utility.JsonResponse(w, http.StatusOK, food)
 }
 
 // Create a food
@@ -65,12 +48,12 @@ func CreateFoodHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	utilities.JsonResponse(w, http.StatusCreated, food)
+	utility.JsonResponse(w, http.StatusCreated, food)
 }
 
 // Update a food
 func UpdateFoodHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := utilities.ParseID(r)
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return
@@ -87,12 +70,12 @@ func UpdateFoodHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	utilities.JsonResponse(w, http.StatusAccepted, updatedFood)
+	utility.JsonResponse(w, http.StatusAccepted, updatedFood)
 }
 
 // Delete a food
 func DeleteFoodHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := utilities.ParseID(r)
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return

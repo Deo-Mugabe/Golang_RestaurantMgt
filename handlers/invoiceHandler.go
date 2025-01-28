@@ -6,25 +6,8 @@ import (
 
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/models"
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/services"
-	"github.com/Deo-Mugabe/Golang_RestaurantMgt/utilities"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/utility"
 )
-
-// Utility to parse ID from URL
-// func parseID(r *http.Request) (uint, error) {
-// 	vars := mux.Vars(r)
-// 	id, err := strconv.Atoi(vars["id"])
-// 	if err != nil {
-// 		return 0, err
-// 	}
-// 	return uint(id), nil
-// }
-
-// Utility for JSON response
-// func jsonResponse(w http.ResponseWriter, status int, data interface{}) {
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(status)
-// 	json.NewEncoder(w).Encode(data)
-// }
 
 // Get all invoices
 func GetInvoicesHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,12 +16,12 @@ func GetInvoicesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	utilities.JsonResponse(w, http.StatusOK, invoices)
+	utility.JsonResponse(w, http.StatusOK, invoices)
 }
 
 // Get a single invoice by ID
 func GetInvoiceHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := utilities.ParseID(r)
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
@@ -49,7 +32,7 @@ func GetInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	utilities.JsonResponse(w, http.StatusOK, invoice)
+	utility.JsonResponse(w, http.StatusOK, invoice)
 }
 
 // Create a new invoice
@@ -65,12 +48,12 @@ func CreateInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	utilities.JsonResponse(w, http.StatusCreated, invoice)
+	utility.JsonResponse(w, http.StatusCreated, invoice)
 }
 
 // Update an existing invoice
 func UpdateInvoiceHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := utilities.ParseID(r)
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
@@ -87,12 +70,12 @@ func UpdateInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	utilities.JsonResponse(w, http.StatusAccepted, updatedInvoice)
+	utility.JsonResponse(w, http.StatusAccepted, updatedInvoice)
 }
 
 // Delete an invoice
 func DeleteInvoiceHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := utilities.ParseID(r)
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return

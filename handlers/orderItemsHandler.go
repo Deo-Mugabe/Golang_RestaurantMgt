@@ -3,11 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/models"
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/services"
-	"github.com/gorilla/mux"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/utility"
 )
 
 func GetOrderItemsHandler(w http.ResponseWriter, r *http.Request) {
@@ -16,13 +15,12 @@ func GetOrderItemsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(orderItems)
+	utility.JsonResponse(w, http.StatusOK, orderItems)
 }
 
 func GetOrderItemHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return
@@ -32,28 +30,33 @@ func GetOrderItemHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(orderItem)
+	utility.JsonResponse(w, http.StatusOK, orderItem)
 }
 
+// GetOrderItemsByOrderHandler fetches all order items for a specific order
 func GetOrderItemsByOrderHandler(w http.ResponseWriter, r *http.Request) {
-	var orderItem models.OrderItem
-	if err := json.NewDecoder(r.Body).Decode(orderItem); err != nil {
-		http.Error(w, "Invalid Inputs", http.StatusBadRequest)
+	// Extract order_id from the URL
+
+	orderID, err := utility.ParseID(r)
+	if err != nil {
+		http.Error(w, "Invalid Order ID", http.StatusBadRequest)
 		return
 	}
-	err := services.CreateOrderItem(&orderItem)
+
+	// Call the service to get order items
+	orderItems, err := services.GetOrderItemsByOrder(uint(orderID))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(orderItem)
+
+	// Respond with the order items in JSON format
+	utility.JsonResponse(w, http.StatusOK, orderItems)
 }
 
 func CreateOrderItemHandler(w http.ResponseWriter, r *http.Request) {
 	var orderItem models.OrderItem
-	if err := json.NewDecoder(r.Body).Decode(orderItem); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&orderItem); err != nil {
 		http.Error(w, "Invalid Inputs", http.StatusBadRequest)
 		return
 	}
@@ -62,19 +65,18 @@ func CreateOrderItemHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(orderItem)
+	utility.JsonResponse(w, http.StatusCreated, orderItem)
 }
 
 func UpdateOrderItemHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return
 	}
 	var updatedOrderItem models.OrderItem
-	if err := json.NewDecoder(r.Body).Decode(updatedOrderItem); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&updatedOrderItem); err != nil {
 		http.Error(w, "Invalid Inputs", http.StatusBadRequest)
 		return
 	}
@@ -83,13 +85,12 @@ func UpdateOrderItemHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusAccepted)
-	json.NewEncoder(w).Encode(updatedOrderItem)
+	utility.JsonResponse(w, http.StatusAccepted, updatedOrderItem)
 }
 
 func DeleteOrderItemHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+
+	id, err := utility.ParseID(r)
 	if err != nil {
 		http.Error(w, "Invalid Id", http.StatusBadRequest)
 		return
