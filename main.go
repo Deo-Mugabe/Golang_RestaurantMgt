@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Deo-Mugabe/Golang_RestaurantMgt/Golang_RestaurantMgt/db"
-	"github.com/Deo-Mugabe/Golang_RestaurantMgt/Golang_RestaurantMgt/routes"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/db"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/routes"
 	"github.com/gorilla/mux"
 )
 

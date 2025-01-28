@@ -3,7 +3,7 @@ package db
 import (
 	"log"
 
-	"github.com/Deo-Mugabe/Golang_RestaurantMgt/Golang_RestaurantMgt/models"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

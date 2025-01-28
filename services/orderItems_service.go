@@ -1,12 +1,20 @@
 package services
 
 import (
-	"github.com/Deo-Mugabe/Golang_RestaurantMgt/Golang_RestaurantMgt/db"
-	"github.com/Deo-Mugabe/Golang_RestaurantMgt/Golang_RestaurantMgt/models"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/db"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/models"
 )
 
-func GetOrderItemsByOrder() ([]models.OrderItem, error) {
-	return nil, nil
+func GetOrderItemsByOrder(orderID uint) ([]models.OrderItem, error) {
+	var orderItems []models.OrderItem
+
+	// Query the database to get all order items with the given order ID
+	result := db.DB.Where("order_id = ?", orderID).Find(&orderItems)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return orderItems, nil
 }
 
 func GetOrderItems() ([]models.OrderItem, error) {

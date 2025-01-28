@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/Deo-Mugabe/Golang_RestaurantMgt/Golang_RestaurantMgt/db"
-	"github.com/Deo-Mugabe/Golang_RestaurantMgt/Golang_RestaurantMgt/models"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/db"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/models"
 )
 
 func GetMenus() ([]models.Menu, error) {

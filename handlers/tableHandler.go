@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/Deo-Mugabe/Golang_RestaurantMgt/Golang_RestaurantMgt/models"
-	"github.com/Deo-Mugabe/Golang_RestaurantMgt/Golang_RestaurantMgt/services"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/models"
+	"github.com/Deo-Mugabe/Golang_RestaurantMgt/services"
 	"github.com/gorilla/mux"
 )
 
