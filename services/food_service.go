@@ -56,7 +56,7 @@ func UpdateFood(id uint, updatedFood *models.Food) error {
 	food.Name = updatedFood.Name
 	food.Price = updatedFood.Price
 	food.FoodImage = updatedFood.FoodImage
-	food.MenuID = updatedFood.MenuID
+	//food.MenuID = updatedFood.MenuID
 
 	// Save the updated food item
 	result = db.DB.Save(&food)

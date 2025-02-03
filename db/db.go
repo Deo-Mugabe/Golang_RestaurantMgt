@@ -20,15 +20,18 @@ func InitDB() {
 	}
 	log.Println("Database connection established.")
 
-	// Auto-migrate the models
+	// Auto-migrate the models (Food should be first)
 	err = DB.AutoMigrate(
-		&models.Food{},
-		&models.Invoice{},
-		&models.Menu{},
-		&models.Note{},
-		&models.Order{},
-		&models.OrderItem{},
 		&models.Table{},
+		&models.Order{},
+		&models.Menu{}, // Then migrate Menu table
+		&models.Food{}, // Migrate Food table first
+
+		&models.OrderItem{},
+
+		//&models.Invoice{},
+		&models.Note{},
+
 		&models.User{},
 	)
 	if err != nil {

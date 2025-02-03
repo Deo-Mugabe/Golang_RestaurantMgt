@@ -5,8 +5,7 @@ import "time"
 type Order struct {
 	ID         uint        `gorm:"primaryKey;autoIncrement" json:"id"`
 	OrderDate  time.Time   `gorm:"type:datetime;not null" json:"order_date"`
-	TableID    uint        `gorm:"not null" json:"table_id"`        // Foreign key to Table
-	Table      Table       `gorm:"foreignKey:TableID" json:"table"` // Belongs to Table
+	TableID    uint        `gorm:"not null" json:"table_id"` // Foreign key to Table
 	OrderID    string      `gorm:"type:varchar(50);unique;not null" json:"order_id"`
 	CreatedAt  time.Time   `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt  time.Time   `gorm:"autoUpdateTime" json:"updated_at"`
