@@ -5,6 +5,7 @@ import (
 
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/db"
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/models"
+	"github.com/google/uuid"
 )
 
 // Get all foods from the database
@@ -34,8 +35,20 @@ func CreateFood(food *models.Food) error {
 		return errors.New("invalid food data: name and price are required")
 	}
 
+	// Check if the associated Menu exists
+	var menu models.Menu
+	result := db.DB.First(&menu, food.MenuID)
+	if result.Error != nil {
+		return errors.New("menu not found")
+	}
+
+	// Ensure `food_id` is unique (generate if not provided)
+	if food.FoodID == "" {
+		food.FoodID = uuid.New().String() // Generate unique food ID
+	}
+
 	// Save the new food item
-	result := db.DB.Create(food)
+	result = db.DB.Create(food)
 	return result.Error
 }
 
@@ -44,7 +57,7 @@ func UpdateFood(id uint, updatedFood *models.Food) error {
 	var food models.Food
 	result := db.DB.First(&food, id)
 	if result.Error != nil {
-		return result.Error
+		return errors.New("food item not found")
 	}
 
 	// Ensure valid data before updating
@@ -52,11 +65,13 @@ func UpdateFood(id uint, updatedFood *models.Food) error {
 		return errors.New("invalid update: name and price are required")
 	}
 
+	// Prevent modification of FoodID
+	updatedFood.FoodID = food.FoodID
+
 	// Update food properties
 	food.Name = updatedFood.Name
 	food.Price = updatedFood.Price
 	food.FoodImage = updatedFood.FoodImage
-	//food.MenuID = updatedFood.MenuID
 
 	// Save the updated food item
 	result = db.DB.Save(&food)
@@ -70,4 +85,12 @@ func DeleteFood(id uint) error {
 		return result.Error
 	}
 	return nil
+}
+
+func round(num float64) int {
+	return 0
+}
+
+func toFixed(num float64, precision int) float64 {
+	return 0
 }

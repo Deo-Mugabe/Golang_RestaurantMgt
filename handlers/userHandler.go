@@ -3,10 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/models"
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/services"
-	"github.com/Deo-Mugabe/Golang_RestaurantMgt/utility"
+	"github.com/gorilla/mux"
 )
 
 func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
@@ -15,14 +16,17 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	utility.JsonResponse(w, http.StatusOK, users)
+	w.Header().Set("Context-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(users)
+
 }
 
 func GetUserHandler(w http.ResponseWriter, r *http.Request) {
-
-	id, err := utility.ParseID(r)
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		http.Error(w, "Invalid Id", http.StatusBadRequest)
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
 	user, err := services.GetUser(uint(id))
@@ -30,7 +34,9 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	utility.JsonResponse(w, http.StatusOK, user)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(&user)
 }
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,49 +50,67 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	utility.JsonResponse(w, http.StatusCreated, user)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(&user)
 }
 
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
-
-	id, err := utility.ParseID(r)
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		http.Error(w, "Invalid Id", http.StatusBadRequest)
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
-	var updatedUser models.User
-	if err := json.NewDecoder(r.Body).Decode(&updatedUser); err != nil {
+	var user models.User
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, "Invalid Inputs", http.StatusBadRequest)
 		return
 	}
-	err = services.UpdateUser(uint(id), &updatedUser)
+	err = services.UpdateUser(uint(id), &user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	utility.JsonResponse(w, http.StatusAccepted, updatedUser)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusAccepted)
+	json.NewEncoder(w).Encode(&user)
 }
 
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
-
-	id, err := utility.ParseID(r)
-	if err != nil {
-		http.Error(w, "Invalid Id", http.StatusBadRequest)
+	vars := mux.Vars(r)
+	idStr, exists := vars["id"]
+	if !exists {
+		http.Error(w, "Missing ID in URL", http.StatusBadRequest)
 		return
 	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
 	err = services.DeleteUser(uint(id))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		if err.Error() == "user not found" {
+			http.Error(w, "User not found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
 		return
 	}
-	w.WriteHeader(http.StatusNoContent)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"message": "User deleted successfully"}`))
 }
 
-func SignUp(w *http.ResponseWriter, r *http.Request) {
+func SignUp(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func Login(w *http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request) {
 
 }
 

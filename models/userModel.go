@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 type User struct {
 	ID           uint      `gorm:"primaryKey;autoIncrement" json:"id"`
@@ -15,4 +19,20 @@ type User struct {
 	CreatedAt    time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt    time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 	UserID       string    `gorm:"type:varchar(50);unique;not null" json:"user_id"`
+}
+
+// HashPassword hashes the user's password before saving it to the database
+func (user *User) HashPassword(password string) error {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.Password = string(hashedPassword)
+	return nil
+}
+
+// CheckPassword compares a provided password with the stored hash
+func (user *User) CheckPassword(providedPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(providedPassword))
+	return err == nil
 }
