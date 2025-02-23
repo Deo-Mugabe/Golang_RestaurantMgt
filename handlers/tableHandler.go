@@ -75,8 +75,12 @@ func DeleteTableHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	err = services.DeleteTable(uint(id))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		if err.Error() == "user not found" {
+			http.Error(w, "User not found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
 	}
 	w.WriteHeader(http.StatusNoContent)
+	w.Write([]byte(`{"Table deleted successfully"}`))
 }

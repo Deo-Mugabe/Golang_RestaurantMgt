@@ -1,6 +1,8 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/db"
 	"github.com/Deo-Mugabe/Golang_RestaurantMgt/models"
 )
@@ -42,5 +44,11 @@ func UpdateTable(id uint, updatedTable *models.Table) error {
 
 func DeleteTable(id uint) error {
 	result := db.DB.Delete(&models.Table{}, id)
-	return result.Error
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("user not found") // Handle case where no user is deleted
+	}
+	return nil
 }
